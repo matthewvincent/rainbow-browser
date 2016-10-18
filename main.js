@@ -157,7 +157,9 @@ class App extends React.Component {
           {/* START COLOR BROWSER VIEW */}
 
           <StatusBar barStyle="default" />
+
           <Header logo={Logo}/>
+
           <ColorBrowser 
             colors={this.state.colors} 
             makeColors={this.makeColors.bind(this)} 
@@ -183,26 +185,31 @@ class App extends React.Component {
           > 
               
             <View style={{flex: 1, marginBottom: 100}}>
+
               <TouchableOpacity 
                 style={styles.screenshotButton}
-                onPress={()=>this.showActionSheet(this.snapshot("colorPalette"))}
-              >
-                <Ionicons 
+                onPress={()=>this.showActionSheet(
+                  this.snapshot("colorPalette")
+                )}
+              > <Ionicons 
                   name="ios-download-outline" 
                   size={50} 
                   color="black" 
                 />
               </TouchableOpacity>
+
               <TouchableOpacity 
                 style={styles.closeModalButton}
-                onPress={this.setModalVisible.bind(this)}>
-                <Ionicons 
+                onPress={this.setModalVisible.bind(this)}
+              > <Ionicons 
                   name="ios-close-circle-outline" 
                   size={50} 
                   color="black" 
                 />
               </TouchableOpacity>
+
             </View>
+
             <View 
               style={{flex: 1, height: height - 100}}
               ref={'colorPalette'} 
@@ -218,6 +225,7 @@ class App extends React.Component {
                 </View>
               ))}
             </View>
+
           </Components.BlurView>
 
           {/* END MODAL VIEW*/}
@@ -327,15 +335,15 @@ const SelectedColors = ({selectedColors, removeColor}) => (
         key={i} 
         style={styles.selectedColor}
         onPress={() => removeColor(c)}
-      >
+      > 
         <View 
           style={[styles.selectedColor, {backgroundColor: c}]}
           shadowOpacity={.2}
           shadowColor='black'
           shadowRadius={2}
           shadowOffset={{height: 2, width: 0}}
-        >
-        </View>
+        ></View>
+
       </TouchableOpacity>
     ))}
   </ScrollView>
