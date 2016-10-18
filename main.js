@@ -102,7 +102,7 @@ class App extends React.Component {
   }
 
   setModalVisible() {
-    var v = this.state.modalVisible;
+    const v = this.state.modalVisible;
 
     this.setState({
       modalVisible: !v
@@ -114,8 +114,6 @@ class App extends React.Component {
       'Save Palette',
       'Cancel',
     ];
-
-    const CANCEL_INDEX = 1;
 
     ActionSheetIOS.showActionSheetWithOptions({
       options: BUTTONS,
