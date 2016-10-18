@@ -185,31 +185,29 @@ class App extends React.Component {
           > 
               
             <View style={{flex: 1, marginBottom: 100}}>
-
               <TouchableOpacity 
                 style={styles.screenshotButton}
                 onPress={()=>this.showActionSheet(
                   this.snapshot("colorPalette")
                 )}
-              > <Ionicons 
+              >
+                <Ionicons 
                   name="ios-download-outline" 
                   size={50} 
                   color="black" 
                 />
               </TouchableOpacity>
-
               <TouchableOpacity 
                 style={styles.closeModalButton}
                 onPress={this.setModalVisible.bind(this)}
-              > <Ionicons 
+              >
+                <Ionicons 
                   name="ios-close-circle-outline" 
                   size={50} 
                   color="black" 
                 />
               </TouchableOpacity>
-
             </View>
-
             <View 
               style={{flex: 1, height: height - 100}}
               ref={'colorPalette'} 
@@ -225,7 +223,6 @@ class App extends React.Component {
                 </View>
               ))}
             </View>
-
           </Components.BlurView>
 
           {/* END MODAL VIEW*/}
