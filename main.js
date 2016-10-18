@@ -1,6 +1,12 @@
 import Exponent, { Components } from 'exponent';
 import React from 'react';
 import _ from 'underscore';
+import RNViewShot from "react-native-view-shot";
+import { takeSnapshot } from "react-native-view-shot";
+import { Ionicons } from '@exponent/vector-icons';
+import Logo from './rainbowBrowser.png';
+import styles from './stylesheet';
+
 import {
   StyleSheet,
   Text,
@@ -17,14 +23,6 @@ import {
   ActionSheetIOS
 } from 'react-native';
 
-
-import RNViewShot from "react-native-view-shot";
-import { takeSnapshot } from "react-native-view-shot";
-
-import { Ionicons } from '@exponent/vector-icons';
-import Logo from './rainbowBrowser.png';
-import styles from './stylesheet';
-
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;  
 
@@ -33,6 +31,7 @@ class App extends React.Component {
   constructor() {
     super()
 
+    // data source for colors browser
     const ds = new ListView.DataSource({
       rowHasChanged: (r1, r2) => r1 !== r2
     });
@@ -54,11 +53,12 @@ class App extends React.Component {
     }
   }
 
+  // initial batch of colors
   componentDidMount() {
     this.makeColors();
-    console.log(  )
   }
 
+  // randomly produce hex colors and add to browser view
   makeColors() {
     const newColors = [];
     let oldColors = this.state.oldColors.slice();
@@ -83,6 +83,7 @@ class App extends React.Component {
     });
   }
 
+  // add color to palette
   addColor(c) {
     const sc = this.state.selectedColors;
 
@@ -93,6 +94,7 @@ class App extends React.Component {
     }
   }
 
+  // remove color from palette
   removeColor(c) {
     const sc = this.state.selectedColors;
 
@@ -101,6 +103,7 @@ class App extends React.Component {
     });
   }
 
+  // toggle palette view modal
   setModalVisible() {
     const v = this.state.modalVisible;
 
@@ -109,6 +112,8 @@ class App extends React.Component {
     });
   }
 
+  // display action sheet in modal view
+  // prompt to save palette to camera roll
   showActionSheet = (cb) => {
     const BUTTONS = [
       'Save Palette',
@@ -121,12 +126,12 @@ class App extends React.Component {
       tintColor: 'rgba(0,0,0,.8)',
     },
     (buttonIndex) => {
-      if (buttonIndex === 0) {
-        cb();
-      }
+      if (buttonIndex === 0) { cb(); }
     });
   }
 
+  // take screenshot of color palette in modal view
+  // and save it to user camera roll
   snapshot = refname => () =>
     takeSnapshot(this.refs[refname], this.state.value)
     .then(res =>
@@ -149,6 +154,8 @@ class App extends React.Component {
       return (
         <View style={styles.container}>
 
+          {/* START COLOR BROWSER VIEW */}
+
           <StatusBar barStyle="default" />
           <Header logo={Logo}/>
           <ColorBrowser 
@@ -156,7 +163,17 @@ class App extends React.Component {
             makeColors={this.makeColors.bind(this)} 
             addColor={this.addColor.bind(this)}
           />
-      
+
+          <Footer 
+            selectedColors={this.state.selectedColors} 
+            removeColor={this.removeColor.bind(this)}
+            setModalVisible={this.setModalVisible.bind(this)}
+          />
+
+          {/* END COLOR BROWSER VIEW */}
+        
+          {/* START MODAL VIEW (TODO: chunk into stateless components*/}
+
           <Components.BlurView 
             tintEffect="light" 
             zIndex={100} 
@@ -203,17 +220,15 @@ class App extends React.Component {
             </View>
           </Components.BlurView>
 
-          <Footer 
-            selectedColors={this.state.selectedColors} 
-            removeColor={this.removeColor.bind(this)}
-            setModalVisible={this.setModalVisible.bind(this)}
-          />
+          {/* END MODAL VIEW*/}
+
         </View>
       );
     } else { return <Text>Loading...</Text> }
   }
 }
 
+// individual color component in browser 
 const ColorSwatch = ({c, addColor}) => (
   <View style={[
     styles.colorSwatch, {backgroundColor: c}
@@ -239,6 +254,7 @@ const ColorSwatch = ({c, addColor}) => (
   </View>
 );
 
+// infinite list of colors to add to palette
 const ColorBrowser = ({
   colors, 
   makeColors, 
@@ -258,6 +274,7 @@ const ColorBrowser = ({
   ></ListView>
 );
 
+// logo etc
 const Header = ({logo}) => (
   <Components.BlurView 
     tintEffect="light" 
@@ -272,6 +289,7 @@ const Header = ({logo}) => (
   </Components.BlurView>
 );
 
+// contains selected view and link to palette view
 const Footer = ({
   selectedColors, 
   removeColor, 
@@ -296,6 +314,8 @@ const Footer = ({
   </Components.BlurView>
 );
 
+// currently selected color palette
+// displayed in footer of home page
 const SelectedColors = ({selectedColors, removeColor}) => (
   <ScrollView 
     horizontal={true} 
