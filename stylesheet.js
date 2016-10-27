@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     height: 100, 
     width: width, 
     position: 'absolute', 
-    zIndex: 10, 
+    top: 0,
     alignItems: 'center', 
     justifyContent:'center'
   },
@@ -22,7 +22,6 @@ const styles = StyleSheet.create({
     height: 60,
     width: width,
     position: 'absolute',
-    zIndex: 10,
     bottom: 0
   },
   colorSwatch: {
@@ -58,7 +57,6 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     right: 12, 
     marginTop: 5,
-    zIndex: 20
   },
   screenshotButton: {
     height: 40, 
@@ -66,7 +64,6 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     left: 20, 
     top: 35,
-    zIndex: 201
   },
   closeModalButton: {
     height: 40, 
@@ -74,7 +71,6 @@ const styles = StyleSheet.create({
     position: 'absolute', 
     right: 10, 
     top: 35, 
-    zIndex: 201
   },
   selectedColors: {
     maxWidth: width - 40,
@@ -107,7 +103,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     opacity: .8, 
-    transform: [{scale: .3}]
+    transform: [{scale: .25}]
   },
   logoWrapper: {
     marginTop: 20, 
