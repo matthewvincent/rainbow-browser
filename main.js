@@ -71,7 +71,7 @@ class App extends React.Component {
       return '#'+(Math.random()*0xFFFFFF<<0).toString(16)
     }
 
-    while(newColors.length < 15) {
+    while(newColors.length < 100) {
       var newColor = randomColor();
 
       if (newColor.length === 7) {

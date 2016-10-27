@@ -1,8 +1,8 @@
 {
-  "name": "color-picker",
+  "name": "rainbow-browser",
   "version": "0.0.0",
-  "description": "Hello Exponent!",
-  "author": null,
+  "description": "Super Fun And Useful Color Palette Creator",
+  "author": "Matthew Vincent",
   "private": true,
   "main": "main.js",
   "dependencies": {
