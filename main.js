@@ -7,7 +7,6 @@ import { Ionicons } from '@exponent/vector-icons';
 import Logo from './rainbowBrowser.png';
 import styles from './stylesheet';
 
-
 import {
   StyleSheet,
   Text,
@@ -25,11 +24,8 @@ import {
   ActionSheetIOS
 } from 'react-native';
 
-const width = Dimensions.get('window').width;
+const width  = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;  
-
-
-
 
 class App extends React.Component {
   constructor() {
@@ -46,14 +42,7 @@ class App extends React.Component {
       selectedColors: [],
       ds: ds,
       modalVisible: false,
-      previewSource: "",
-      error: null,
-      res: null,
-      value: {
-        format: "png",
-        quality: 1,
-        result: "file",
-      },
+
     }
   }
 
@@ -114,6 +103,75 @@ class App extends React.Component {
     });
   }
 
+  render() {
+    if (this.state.oldColors.length > 1) {
+      return (
+        <View style={styles.container}>
+         
+          <Home 
+            colors={this.state.colors}
+            makeColors={this.makeColors.bind(this)}
+            addColor={this.addColor.bind(this)}
+            selectedColors={this.state.selectedColors}
+            removeColor={this.removeColor.bind(this)}
+            setModalVisible={this.setModalVisible.bind(this)}
+          />
+          
+          <PaletteModal
+            setModalVisible={this.setModalVisible.bind(this)}
+            modalVisible={this.state.modalVisible}
+            selectedColors={this.state.selectedColors}
+          />
+
+        </View>
+      );
+    } else { return <Text>Loading...</Text> }
+  }
+}
+
+const Home = ({
+  colors,
+  makeColors,
+  addColor,
+  selectedColors,
+  removeColor,
+  setModalVisible
+}) => (
+  <View style={styles.container}>
+    <StatusBar barStyle="default" />
+
+    <ColorBrowser 
+      colors={colors} 
+      makeColors={makeColors} 
+      addColor={addColor}
+    /> 
+
+    <Header logo={Logo} /> 
+    
+    <Footer 
+      selectedColors={selectedColors} 
+      removeColor={removeColor}
+      setModalVisible={setModalVisible}
+    /> 
+  </View>
+);
+
+class PaletteModal extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      previewSource: "",
+      error: null,
+      res: null,
+      value: {
+        format: "png",
+        quality: 1,
+        result: "file",
+      },
+    }
+  }
+
   // display action sheet in modal view
   // prompt to save palette to camera roll
   showActionSheet = (cb) => {
@@ -148,96 +206,105 @@ class App extends React.Component {
     .then(res => CameraRoll.saveToCameraRoll(res))
     .catch(error => this.setState({ error, res: null, previewSource: null }))
 
-
-  render() {
-
-    if (this.state.oldColors.length > 1) {
-      return (
-        <View style={styles.container}>
-
-          {/* START COLOR BROWSER VIEW */}
-
-          <StatusBar barStyle="default" />
-
-          
-          
-          <ColorBrowser 
-            colors={this.state.colors} 
-            makeColors={this.makeColors.bind(this)} 
-            addColor={this.addColor.bind(this)}
-          /> 
-          <Header logo={Logo} /> 
-          <Footer 
-            selectedColors={this.state.selectedColors} 
-            removeColor={this.removeColor.bind(this)}
-            setModalVisible={this.setModalVisible.bind(this, true)}
+  render () {
+    return (
+      <Modal
+        animationType={"slide"}
+        transparent={true}
+        visible={this.props.modalVisible}
+        onRequestClose={() => this.props.setModalVisible(false)}
+      >
+        <Components.BlurView 
+          tintEffect="light" 
+          style={styles.modal}
+        > 
+          <ModalHeader 
+            showActionSheet={this.showActionSheet.bind(this)}
+            snapshot={this.snapshot.bind(this)}
+            setModalVisible={this.props.setModalVisible}
+          > </ModalHeader>
+          <Palette 
+            ref={'colorPalette'}
+            selectedColors={this.props.selectedColors} 
           />
-
-          {/* END COLOR BROWSER VIEW }
-        
-          {/* START MODAL VIEW (TODO: chunk into stateless components*/}
-          <Modal
-            animationType={"slide"}
-            transparent={this.state.modalVisible}
-            visible={this.state.modalVisible}
-            onRequestClose={() => this.setModalVisible(false)}
-          >
-            <Components.BlurView 
-              tintEffect="light" 
-              style={styles.modal}
-              // style={!modalVisible 
-              //   ? {height: 0, width: 0} 
-              //   : styles.modal}
-            > 
-                
-              <View style={{flex: 1, marginBottom: 100}}>
-                <TouchableOpacity 
-                  style={styles.screenshotButton}
-                  onPress={()=>this.showActionSheet(
-                    this.snapshot("colorPalette")
-                  )}
-                >
-                  <Ionicons 
-                    name="ios-download-outline" 
-                    size={50} 
-                    color="black" 
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.closeModalButton}
-                  onPress={this.setModalVisible.bind(this, false)}
-                >
-                  <Ionicons 
-                    name="ios-close-circle-outline" 
-                    size={50} 
-                    color="black" 
-                  />
-                </TouchableOpacity>
-              </View>
-              <View 
-                style={{flex: 1, height: height - 100}}
-                ref={'colorPalette'} 
-              >
-                {this.state.selectedColors.map((c,i) => (
-                  <View 
-                    key={i} 
-                    style={[
-                      styles.jumboColor, 
-                      { backgroundColor: c }]}
-                  >
-                    <Text style={styles.jumboColorHex}>{c}</Text>
-                  </View>
-                ))}
-              </View>
-            </Components.BlurView>
-          </Modal>
-          {/* END MODAL VIEW*/}
-
-        </View>
-      );
-    } else { return <Text>Loading...</Text> }
+        </Components.BlurView>
+      </Modal>
+    );
   }
 }
+
+
+class Palette extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render () {
+    return (
+      <View 
+        style={{flex: 1, height: height - 100}}
+      >
+        {this.props.selectedColors.map((c,i) => (
+          <View 
+            key={i} 
+            style={[
+              styles.jumboColor, 
+              { backgroundColor: c }]}
+          >
+            <Text style={styles.jumboColorHex}>{c}</Text>
+          </View>
+        ))}
+      </View>
+    );
+  }
+}
+
+const ModalHeader = ({
+  showActionSheet, 
+  snapshot, 
+  setModalVisible
+}) => (
+  <View style={{flex: 1, marginBottom: 100}}>
+
+    <ScreenshotButton 
+      showActionSheet={showActionSheet}
+      snapshot={snapshot}
+    > </ScreenshotButton>
+
+    <CloseModalButton 
+      setModalVisible={setModalVisible}
+    > </CloseModalButton>
+
+  </View>
+);
+
+const ScreenshotButton = ({showActionSheet, snapshot}) => (
+  <TouchableOpacity 
+    style={styles.screenshotButton}
+    onPress={() => showActionSheet(
+      snapshot("colorPalette")
+    )}
+  >
+    <Ionicons 
+      name="ios-download-outline" 
+      size={50} 
+      color="black" 
+    />
+  </TouchableOpacity>
+);
+
+const CloseModalButton = ({setModalVisible}) => (
+  <TouchableOpacity 
+    style={styles.closeModalButton}
+    onPress={() => setModalVisible(false)}
+  >
+    <Ionicons 
+      name="ios-close-circle-outline" 
+      size={50} 
+      color="black" 
+    />
+  </TouchableOpacity>
+);
 
 // individual color component in browser 
 const ColorSwatch = ({c, addColor}) => (
@@ -287,16 +354,17 @@ const ColorBrowser = ({
 
 // logo etc
 const Header = ({logo}) => (
-
   <Components.BlurView 
     tintEffect="light" 
     style={styles.header}
   >
     <View style={styles.logoWrapper}>
-    <Image source={logo} style={styles.logo}/>
+      <Image 
+        source={logo} 
+        style={styles.logo}
+      />
     </View>
   </Components.BlurView>
-
 );
 
 // contains selected colors and link to palette 
@@ -345,7 +413,6 @@ const SelectedColors = ({selectedColors, removeColor}) => (
           shadowRadius={2}
           shadowOffset={{height: 2, width: 0}}
         ></View>
-
       </TouchableOpacity>
     ))}
   </ScrollView>
