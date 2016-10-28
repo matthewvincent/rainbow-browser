@@ -42,7 +42,6 @@ class App extends React.Component {
       selectedColors: [],
       ds: ds,
       modalVisible: false,
-
     }
   }
 
@@ -147,7 +146,7 @@ const Home = ({
     /> 
 
     <Header logo={Logo} /> 
-    
+
     <Footer 
       selectedColors={selectedColors} 
       removeColor={removeColor}
@@ -161,7 +160,6 @@ class PaletteModal extends React.Component {
     super(props)
 
     this.state = {
-      previewSource: "",
       error: null,
       res: null,
       value: {
@@ -172,39 +170,24 @@ class PaletteModal extends React.Component {
     }
   }
 
-  // display action sheet in modal view
-  // prompt to save palette to camera roll
-  showActionSheet = (cb) => {
-    const BUTTONS = [
-      'Save To Camera Roll',
-      'Cancel',
-    ];
+  // display action sheet and prompt to save palette to camera roll
+  showActionSheet (cb) {
+    const BUTTONS = ['Save To Camera Roll', 'Cancel'];
 
     ActionSheetIOS.showActionSheetWithOptions({
       options: BUTTONS,
       cancelButtonIndex: 1,
       tintColor: 'rgba(0,0,0,.8)',
     },
-    (buttonIndex) => {
-      if (buttonIndex === 0) { cb(); }
-    });
+    i => i === 0 ? cb() : null);
   }
 
-  // take screenshot of color palette in modal view
-  // and save it to user camera roll
+  // take screenshot of color palette and save it 
   snapshot = refname => () =>
     takeSnapshot(this.refs[refname], this.state.value)
-    .then(res =>
-      this.state.value.result !== "file"
-      ? res
-      : new Promise((success, failure) =>
-      // just a test to ensure res can be used in Image.getSize
-      Image.getSize(
-        res,
-        (width, height) => (console.log(res, width, height), success(res)),
-        failure)))
-    .then(res => CameraRoll.saveToCameraRoll(res))
-    .catch(error => this.setState({ error, res: null, previewSource: null }))
+    .then(res    => CameraRoll.saveToCameraRoll(res))
+    .catch(error => this.setState({ error, res: null}))
+
 
   render () {
     return (
@@ -235,23 +218,21 @@ class PaletteModal extends React.Component {
 
 
 class Palette extends React.Component {
-  constructor(props) {
-    super(props)
-  }
+
+  constructor(props) { super(props) }
 
   render () {
     return (
-      <View 
-        style={{flex: 1, height: height - 100}}
-      >
+      <View style={{flex: 1, height: height - 100}}>
         {this.props.selectedColors.map((c,i) => (
           <View 
             key={i} 
             style={[
               styles.jumboColor, 
               { backgroundColor: c }]}
-          >
-            <Text style={styles.jumboColorHex}>{c}</Text>
+          > <Text style={styles.jumboColorHex}
+            > {c}
+            </Text>
           </View>
         ))}
       </View>
@@ -322,7 +303,7 @@ const ColorSwatch = ({c, addColor}) => (
     >
       <Text style={styles.hexText}>{c}</Text>
     </View>
-    <TouchableOpacity onPress={()=>addColor(c)}>
+    <TouchableOpacity onPress={() => addColor(c)}>
       <Ionicons 
         name="ios-add-circle-outline" 
         size={40} 
